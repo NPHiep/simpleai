@@ -26,6 +26,11 @@ use LINE\LINEBot\Receive\Operation;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+$app->get('/', function (Request $req, Response $res, $arg) {
+    return "hello world";
+   
+});
+
 $app->post('/callback', function (Request $req, Response $res, $arg) {
     $body = $req->getBody();
     $signatureHeader = $req->getHeader('X-LINE-ChannelSignature');
