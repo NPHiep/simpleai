@@ -136,4 +136,8 @@ $app->get('/', function (Request $req, Response $res, $arg) {
     return "hello world";
    
 });
+$app->get('/home', function (Request $req, Response $res, $arg) {
+    return "hello world home";
+   
+});
 
