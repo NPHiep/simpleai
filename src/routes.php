@@ -49,11 +49,20 @@ $app->post('/callback', function (Request $req, Response $res, $arg) {
                 $receive->getCreatedTime(),
                 $receive->getText()
             ));
-            $bot->sendText($receive->getFromMid(), $receive->getText());
+            try{
+                $bot->sendText($receive->getFromMid(), $receive->getText());
+            }catch(Exception $e)
+            {
+                 $this->logger->info(sprintf(
+                    'ex=%s',
+                    $e->getMessage()
+                ));
+
+            }
         }
     }
 
-    return $res->getBody()->write("OK");
+    r1eturn $res->getBody()->write("OK");
 });
 
 $app->get('/', function (Request $req, Response $res, $arg) {
