@@ -1,5 +1,4 @@
 <?php
-phpinfo();
 /**
  * Copyright 2016 LINE Corporation
  *
