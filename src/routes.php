@@ -49,26 +49,19 @@ $app->post('/callback', function (Request $req, Response $res, $arg) {
                 $receive->getCreatedTime(),
                 $receive->getText()
             ));
-            try{
-                $bot->sendText($receive->getFromMid(), $receive->getText());
-            }catch(Exception $e)
-            {
-                 $this->logger->info(sprintf(
-                    'ex=%s',
-                    $e->getMessage()
-                ));
+            $bot->sendText($receive->getFromMid(), $receive->getText());
+            
 
             }
         }
-    }
 
-    r1eturn $res->getBody()->write("OK");
+    return $res->getBody()->write("OK");
 });
 
-$app->get('/', function (Request $req, Response $res, $arg) {
+$app->get('/test', function (Request $req, Response $res, $arg) {
     $bot = $this->bot;
-    $bot->sendText("u4983945981742f76022547cb0bf32f53", "tin nhan gui tu bot");    
-    return "hello world";
+    $res = $bot->sendText("u4983945981742f76022547cb0bf32f53", "tin nhan gui tu bot");    
+    return($res);
    
 });
 $app->get('/home', function (Request $req, Response $res, $arg) {
