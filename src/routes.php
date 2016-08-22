@@ -43,89 +43,13 @@ $app->post('/callback', function (Request $req, Response $res, $arg) {
             /** @var Message $receive */
 
             $this->logger->info(sprintf(
-                'contentId=%s, fromMid=%s, createdTime=%s',
+                'contentId=%s, fromMid=%s, createdTime=%s, msg=%s',
                 $receive->getContentId(),
                 $receive->getFromMid(),
-                $receive->getCreatedTime()
+                $receive->getCreatedTime(),
+                $receive->getText()
             ));
-
-            if ($receive->isText()) {
-                /** @var Text $receive */
-                if ($receive->getText() === 'me') {
-                    $ret = $bot->getUserProfile($receive->getFromMid());
-                    $contact = $ret['contacts'][0];
-                    $multipleMsgs = (new MultipleMessages())
-                        ->addText(sprintf(
-                            'Hello! %s san! Your status message is %s',
-                            $contact['displayName'],
-                            $contact['statusMessage']
-                        ))
-                        ->addImage($contact['pictureUrl'], $contact['pictureUrl'])
-                        ->addSticker(mt_rand(0, 10), 1, 100);
-                    $bot->sendMultipleMessages($receive->getFromMid(), $multipleMsgs);
-                } else {
-                    $bot->sendText($receive->getFromMid(), $receive->getText());
-                }
-            } elseif ($receive->isImage() || $receive->isVideo()) {
-                $content = $bot->getMessageContent($receive->getContentId());
-                $meta = stream_get_meta_data($content->getFileHandle());
-                $contentSize = filesize($meta['uri']);
-                $type = $receive->isImage() ? 'image' : 'video';
-
-                $previewContent = $bot->getMessageContentPreview($receive->getContentId());
-                $previewMeta = stream_get_meta_data($previewContent->getFileHandle());
-                $previewContentSize = filesize($previewMeta['uri']);
-
-                $bot->sendText(
-                    $receive->getFromMid(),
-                    "Thank you for sending a $type.\nOriginal file size: " .
-                    "$contentSize\nPreview file size: $previewContentSize"
-                );
-            } elseif ($receive->isAudio()) {
-                $bot->sendText($receive->getFromMid(), "Thank you for sending a audio.");
-            } elseif ($receive->isLocation()) {
-                /** @var Location $receive */
-                $bot->sendLocation(
-                    $receive->getFromMid(),
-                    sprintf("%s\n%s", $receive->getText(), $receive->getAddress()),
-                    $receive->getLatitude(),
-                    $receive->getLongitude()
-                );
-            } elseif ($receive->isSticker()) {
-                /** @var Sticker $receive */
-                $bot->sendSticker(
-                    $receive->getFromMid(),
-                    $receive->getStkId(),
-                    $receive->getStkPkgId(),
-                    $receive->getStkVer()
-                );
-            } elseif ($receive->isContact()) {
-                /** @var Contact $receive */
-                $bot->sendText(
-                    $receive->getFromMid(),
-                    sprintf("Thank you for sending %s information.", $receive->getDisplayName())
-                );
-            } else {
-                throw new \Exception("Received invalid message type");
-            }
-        } elseif ($receive->isOperation()) {
-            /** @var Operation $receive */
-
-            $this->logger->info(sprintf(
-                'revision=%s, fromMid=%s',
-                $receive->getRevision(),
-                $receive->getFromMid()
-            ));
-
-            if ($receive->isAddContact()) {
-                $bot->sendText($receive->getFromMid(), "Thank you for adding me to your contact list!");
-            } elseif ($receive->isBlockContact()) {
-                $this->logger->info("Blocked");
-            } else {
-                throw new \Exception("Received invalid operation type");
-            }
-        } else {
-            throw new \Exception("Received invalid receive type");
+            $bot->sendText($receive->getFromMid(), $receive->getText());
         }
     }
 
