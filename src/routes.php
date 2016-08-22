@@ -66,6 +66,8 @@ $app->post('/callback', function (Request $req, Response $res, $arg) {
 });
 
 $app->get('/', function (Request $req, Response $res, $arg) {
+    $bot = $this->bot;
+    $bot->sendText("u4983945981742f76022547cb0bf32f53", "tin nhan gui tu bot");    
     return "hello world";
    
 });
